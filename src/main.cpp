@@ -41,15 +41,18 @@ not sure why but read it somewhere
 */ 
 
 const int LED_PIN = 21;
-const int BUTTON_PIN = 22;
+const int STOP_BUTTON_PIN = 22;
+const int RESET_BUTTON_PIN = 19;
 const int POT_PIN = 32; 
 
 JSONVar data;
 
-// Variables to store LED state and button state
+// Variables to store LED state and button states
 bool ledState = false;
-bool buttonState = false;
-bool lastButtonState = false;
+bool stopButtonState = false;
+bool lastStopButtonState = false;
+bool resetButtonState = false;
+bool lastResetButtonState = false;
 
 // Timer to refresh pot reading every 500mS
 unsigned long lastTime = 0;
@@ -85,7 +88,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(LED_PIN, OUTPUT);
   pinMode(POT_PIN, INPUT);
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  pinMode(STOP_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(RESET_BUTTON_PIN, INPUT_PULLUP);
   
   // Set initial LED state
   digitalWrite(LED_PIN, ledState);
@@ -131,17 +135,18 @@ void setup() {
 
 void loop() {
   // Read button state
-  buttonState = digitalRead(BUTTON_PIN);
+  stopButtonState = digitalRead(STOP_BUTTON_PIN);
+  resetButtonState = digitalRead(RESET_BUTTON_PIN);
 
-  // Check if button state has changed
-  if (buttonState != lastButtonState) {    
+  // Check if stop button state has changed
+  if (stopButtonState != lastStopButtonState) {    
     // debounce
     delay(50);  
-    if (buttonState == LOW) {
+    if (stopButtonState == LOW) {
       // Button is pressed
       if(ledState){ 
-        // if LED was on, reset timer
-        events.send("Timer Reset", "reset_timer", millis());
+        // if LED was on, stop timer
+        events.send("Timer Stopped", "stop_timer", millis());
       }
       else{  
         // if LED was off, start timer
@@ -151,14 +156,32 @@ void loop() {
       // toggle LED
       ledState = !ledState;   
       digitalWrite(LED_PIN, ledState);
-      Serial.println("Button pressed!");  
+      Serial.println("Start/stop button pressed!");  
     }
   }
 
-  // Update last button state
-  lastButtonState = buttonState;
+  // Check if reset button state has changed
+  if (resetButtonState != lastResetButtonState) {    
+    // debounce
+    delay(50);  
+    if (resetButtonState == LOW) {
+      // Button is pressed, reset timer
+      events.send("Timer reset", "reset_timer", millis());
 
-  // after 
+      // if LED is off, don't change it
+      if(!ledState){}
+      else{
+        ledState = !ledState; 
+        digitalWrite(LED_PIN, ledState);
+      }
+      Serial.println("Reset button pressed!"); 
+    }
+  }
+    
+  // Update last button states
+  lastStopButtonState = stopButtonState;
+  lastResetButtonState = resetButtonState;
+  
   if ((millis() - lastTime) > sensorReadingDelay) {
     // Send Events to the client with the Sensor Readings every 0.25 seconds
     events.send("ping",NULL,millis());
