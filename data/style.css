@@ -51,6 +51,26 @@ html {
     justify-content: flex-start;
     margin: 0 -0.3125rem;
   }
+  .shifter { 
+    margin: 0 auto;
+    background-color: black;
+  }
+  .shifter-title { 
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ba78e6;
+  }
+  .shifter-text { 
+    margin: 4.2rem auto;
+    font-size: 2rem;
+    font-weight: bold;
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    display: flex;
+    text-align: center;
+    border: solid;
+    color: white;
+  }
   .card { 
     background-color: black;
   }
