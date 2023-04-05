@@ -46,10 +46,6 @@ const int POT_PIN = 32;
 
 JSONVar data;
 
-// Constants for LED and button pins
-const int LED_PIN = 21;
-const int BUTTON_PIN = 22;
-
 // Variables to store LED state and button state
 bool ledState = false;
 bool buttonState = false;
