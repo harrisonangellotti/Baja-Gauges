@@ -1,0 +1,69 @@
+html {
+    font-family: Helvetica, sans-serif; 
+    display: inline-block; 
+    text-align: center;
+    background-color: black;
+  }
+  h1 {
+    font-size: 2rem; 
+    color: white;
+  }
+  p { 
+    font-size: 1.4rem;
+  }
+  .topnav { 
+    overflow: hidden; 
+    background-color: #4F2683;
+  }
+  body {  
+    margin: 0;
+  }
+  .content { 
+    padding: 5%;
+    background-color: black;
+  }
+  .card-grid { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    display: grid; 
+    grid-gap: 2rem; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .timer {
+    background-color: black;
+    height: 6rem;
+  }  
+  .timer-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ba78e6;
+  }
+  .card { 
+    background-color: black;
+  }
+  .card-title { 
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ba78e6;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+    
+  }
+  
+  #timer {
+    font-size: 48px;
+    text-align: center;
+    margin-top: 20px;
+    color: white;
+  }
+  
+  button {
+    display: block;
+    margin: 20px auto;
+  }
