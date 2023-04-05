@@ -3,10 +3,10 @@ window.addEventListener('load', getReadings);
 
 // Create Temperature Gauge
 var gaugeTemp = new RadialGauge({
-  renderTo: 'gauge-temperature',
-  width: 300,
-  height: 300,
-  units: "x1000 RPM",
+  renderTo: 'gaugeRPM',
+  width: 400,
+  height: 400,
+  units: "x1000",
   minValue: 0,
   maxValue: 8,
   valueInt: 2,
@@ -45,12 +45,12 @@ var gaugeTemp = new RadialGauge({
   animationRule: "linear"
 }).draw();
   
-// Create Potentiometer Gauge
-var gaugePot = new RadialGauge({
-  renderTo: 'potentiometer',
-  width: 300,
-  height: 300,
-  units: "km/h speed",
+// Create Speed Gauge
+var gaugeSpeed = new RadialGauge({
+  renderTo: 'gaugeSpeed',
+  width: 400,
+  height: 400,
+  units: "km/h",
   minValue: 0,
   maxValue: 100,
   valueInt: 2,
@@ -94,8 +94,8 @@ function getReadings(){
     if (this.readyState == 4 && this.status == 200) {
       var myObj = JSON.parse(this.responseText);
       console.log(myObj);
-      var pot = myObj.potentiometer;
-      gaugePot.value = pot;
+      var speed = myObj.gaugeSpeed;
+      gaugeSpeed.value = speed;
     }
   }; 
   xhr.open("GET", "/readings", true);
@@ -125,7 +125,7 @@ if (!!window.EventSource) {
     console.log("new_readings", e.data);
     var myObj = JSON.parse(e.data);
     console.log(myObj);
-    gaugePot.value = myObj.potentiometer;
+    gaugeSpeed.value = myObj.gaugeSpeed;
   }, false);
 }
 
@@ -145,7 +145,7 @@ function updateTimer() {
   var hours = Math.floor(time / 3600);
   var minutes = Math.floor((time % 3600) / 60);
   var seconds = time % 60;
-  document.getElementById("timer").innerHTML = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+  document.getElementById("timer-text").innerHTML = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
 }
 
 function pad(num) {

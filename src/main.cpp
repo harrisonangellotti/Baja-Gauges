@@ -60,7 +60,7 @@ String getSensorReadings(){
   unsigned int potValue = analogRead(POT_PIN);
   unsigned int mappedValue = map(potValue, 0, 4095, 0, 100);
   Serial.printf("Potentiometer reading: %d    |    Mapped reading: %d\n", potValue, mappedValue);
-  data["potentiometer"] = String(mappedValue);
+  data["gaugeSpeed"] = String(mappedValue);
   String jsonString = JSON.stringify(data);
   return jsonString;
 }

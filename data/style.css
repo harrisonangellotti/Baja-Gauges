@@ -30,14 +30,26 @@ html {
     grid-gap: 2rem; 
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
-  .timer {
+  .timer-container {
     background-color: black;
-    height: 6rem;
+    height: auto;
   }  
   .timer-title {
     font-size: 1.5rem;
     font-weight: bold;
     color: #ba78e6;
+  }
+  #timer-text {
+    font-size: 6rem;
+    text-align: center;
+    color: white;
+  }
+  .timer_actions {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 -0.3125rem;
   }
   .card { 
     background-color: black;
@@ -46,22 +58,6 @@ html {
     font-size: 1.5rem;
     font-weight: bold;
     color: #ba78e6;
-  }
-
-  body {
-    font-family: Arial, sans-serif;
-  }
-  
-  h1 {
-    text-align: center;
-    
-  }
-  
-  #timer {
-    font-size: 48px;
-    text-align: center;
-    margin-top: 20px;
-    color: white;
   }
   
   button {
