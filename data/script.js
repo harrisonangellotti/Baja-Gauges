@@ -87,24 +87,10 @@ var speedGauge = new RadialGauge({
   animationRule: "linear"
 }).draw();
 
-// Function to get current sensor readings on the webpage when it loads for the first time
-function getReadings(){
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {   // onreadystatechange only called when page loads
-    if (this.readyState == 4 && this.status == 200) {
-      var myObj = JSON.parse(this.responseText);
-      console.log(myObj);
-      var speed = myObj.gaugeSpeed; // collects the initial data reading
-      speedGauge.value = speed;
-    }
-  }; 
-  xhr.open("GET", "/readings", true); // call the readings page in C++ code to send data back (SSE)
-  xhr.send();
-}
-
 // variables and functionality for timer to react to button presses
 var timerId;
-var time = 300; // 300 seconds in 5 minutes; this will need adjusting for empty tank time
+var initialTime = 300; // 300 seconds in 5 minutes; this will need adjusting for empty tank time
+var time = initialTime;
 
 function startTimer() {
   timerId = setInterval(updateTimer, 1000); // update the timer value every 1000ms
@@ -114,17 +100,40 @@ function stopTimer() {
   clearInterval(timerId);
 }
 
+function resetTimer() {
+  time = initialTime;
+  // make dynamic so timer text is initialized to desired value
+  var minutes = Math.floor((initialTime % 3600) / 60);
+  var seconds = initialTime % 60;
+  document.getElementById("timer-text").innerHTML = pad(minutes) + ":" + pad(seconds);
+}
+
 function updateTimer() {
   time--; // subtract one second
   // reprint to 'timer-text' ID on html
-  var hours = Math.floor(time / 3600);
   var minutes = Math.floor((time % 3600) / 60);
   var seconds = time % 60;
-  document.getElementById("timer-text").innerHTML = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+  document.getElementById("timer-text").innerHTML = pad(minutes) + ":" + pad(seconds);
 }
 
 function pad(num) {
   return num < 10 ? "0" + num : num;
+}
+
+// Function to get current sensor readings on the webpage when it loads for the first time
+function getReadings(){
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {   // onreadystatechange only called when page loads
+    if (this.readyState == 4 && this.status == 200) {
+      var myObj = JSON.parse(this.responseText);
+      console.log(myObj);
+      var speed = myObj.gaugeSpeed; // collects the initial data reading
+      speedGauge.value = speed;
+      resetTimer();
+    }
+  }; 
+  xhr.open("GET", "/readings", true); // call the readings page in C++ code to send data back (SSE)
+  xhr.send();
 }
 
 // listen for events and execute when pages are visited
@@ -159,10 +168,16 @@ if (!!window.EventSource) {
     startTimer();
   }, false);
 
-  // reset_timer event will set timer value back to 300s and stop counting
+  // stop_timer event will stop the timer counting
+  source.addEventListener('stop_timer', function(e) {
+    console.log("stop_timer", e.data);
+    stopTimer();  // stop counting interval
+  }, false);
+
+  // reset_timer event will stop the timer interval and reset value to initialTime
   source.addEventListener('reset_timer', function(e) {
     console.log("reset_timer", e.data);
-    stopTimer();  // stop counting interval
-    time = 300; // reset time val
+    stopTimer();
+    resetTimer();
   }, false);
 }
