@@ -3,7 +3,6 @@
   <head>
     <title>WEBUST Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="gauge.min.js"></script>
@@ -15,7 +14,7 @@
     <div class="content">
       <div class="timer-container">
         <p class="timer-title">Refuel Timer</p>
-        <div id="timer-text">00:00:00</div>
+        <div id="timer-text">05:00</div> <!-- 5:00 may be changed depending on tank size-->
         <div class="timer_actions">
           <button onclick="startTimer()">Start</button>
           <button onclick="stopTimer()">Stop</button>
@@ -24,11 +23,11 @@
       <div class="card-grid">
         <div class="card">
           <p class="card-title">RPMs</p>
-          <canvas id="gaugeRPM"></canvas>
+          <canvas id="gauge-RPM"></canvas>
         </div>
         <div class="card">
           <p class="card-title">Speed</p>
-          <canvas id="gaugeSpeed"></canvas>
+          <canvas id="gauge-speed"></canvas>
         </div>
       </div>
     </div>

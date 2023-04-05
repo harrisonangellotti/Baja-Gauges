@@ -2,8 +2,8 @@
 window.addEventListener('load', getReadings);
 
 // Create Temperature Gauge
-var gaugeTemp = new RadialGauge({
-  renderTo: 'gaugeRPM',
+var rpmGauge = new RadialGauge({
+  renderTo: 'gauge-RPM',
   width: 400,
   height: 400,
   units: "x1000",
@@ -46,8 +46,8 @@ var gaugeTemp = new RadialGauge({
 }).draw();
   
 // Create Speed Gauge
-var gaugeSpeed = new RadialGauge({
-  renderTo: 'gaugeSpeed',
+var speedGauge = new RadialGauge({
+  renderTo: 'gauge-speed',
   width: 400,
   height: 400,
   units: "km/h",
@@ -87,19 +87,44 @@ var gaugeSpeed = new RadialGauge({
   animationRule: "linear"
 }).draw();
 
-// Function to get current readings on the webpage when it loads for the first time
+// Function to get current sensor readings on the webpage when it loads for the first time
 function getReadings(){
   var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
+  xhr.onreadystatechange = function() {   // onreadystatechange only called when page loads
     if (this.readyState == 4 && this.status == 200) {
       var myObj = JSON.parse(this.responseText);
       console.log(myObj);
-      var speed = myObj.gaugeSpeed;
-      gaugeSpeed.value = speed;
+      var speed = myObj.gaugeSpeed; // collects the initial data reading
+      speedGauge.value = speed;
     }
   }; 
-  xhr.open("GET", "/readings", true);
+  xhr.open("GET", "/readings", true); // call the readings page in C++ code to send data back (SSE)
   xhr.send();
+}
+
+// variables and functionality for timer to react to button presses
+var timerId;
+var time = 300; // 300 seconds in 5 minutes; this will need adjusting for empty tank time
+
+function startTimer() {
+  timerId = setInterval(updateTimer, 1000); // update the timer value every 1000ms
+}
+
+function stopTimer() {
+  clearInterval(timerId);
+}
+
+function updateTimer() {
+  time--; // subtract one second
+  // reprint to 'timer-text' ID on html
+  var hours = Math.floor(time / 3600);
+  var minutes = Math.floor((time % 3600) / 60);
+  var seconds = time % 60;
+  document.getElementById("timer-text").innerHTML = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+}
+
+function pad(num) {
+  return num < 10 ? "0" + num : num;
 }
 
 // listen for events and execute when pages are visited
@@ -125,29 +150,19 @@ if (!!window.EventSource) {
     console.log("new_readings", e.data);
     var myObj = JSON.parse(e.data);
     console.log(myObj);
-    gaugeSpeed.value = myObj.gaugeSpeed;
+    speedGauge.value = myObj.gaugeSpeed;
   }, false);
-}
 
-var timerId;
-var time = 0;
+  // start_timer event will start counting down the timer
+  source.addEventListener('start_timer', function(e) {
+    console.log("start_timer", e.data);
+    startTimer();
+  }, false);
 
-function startTimer() {
-  timerId = setInterval(updateTimer, 1000);
-}
-
-function stopTimer() {
-  clearInterval(timerId);
-}
-
-function updateTimer() {
-  time++;
-  var hours = Math.floor(time / 3600);
-  var minutes = Math.floor((time % 3600) / 60);
-  var seconds = time % 60;
-  document.getElementById("timer-text").innerHTML = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
-}
-
-function pad(num) {
-  return num < 10 ? "0" + num : num;
+  // reset_timer event will set timer value back to 300s and stop counting
+  source.addEventListener('reset_timer', function(e) {
+    console.log("reset_timer", e.data);
+    stopTimer();  // stop counting interval
+    time = 300; // reset time val
+  }, false);
 }

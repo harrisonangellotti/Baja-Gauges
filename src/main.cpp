@@ -53,7 +53,14 @@ bool lastButtonState = false;
 
 // Timer to refresh pot reading every 500mS
 unsigned long lastTime = 0;
-unsigned long potDelay = 500; // send pot every 0.5 second
+unsigned long sensorReadingDelay = 250; // send sensor data every .25 second
+
+/*  This is where sensor data will be collected and sent
+
+  FUEL: Flow Rate Sensor / Buttons w Timer
+  SPEED: Accelerometer
+  RPMs: Tachometer / Encoder 
+*/
 
 // Function to return reading from potentiometer as JSON string
 String getSensorReadings(){
@@ -127,22 +134,35 @@ void loop() {
   buttonState = digitalRead(BUTTON_PIN);
 
   // Check if button state has changed
-  if (buttonState != lastButtonState) {
-    delay(50); // Debounce delay
+  if (buttonState != lastButtonState) {    
+    // debounce
+    delay(50);  
     if (buttonState == LOW) {
-      // Button is pressed, toggle LED state
-      ledState = !ledState;
+      // Button is pressed
+      if(ledState){ 
+        // if LED was on, reset timer
+        events.send("Timer Reset", "reset_timer", millis());
+      }
+      else{  
+        // if LED was off, start timer
+        events.send("Timer Started", "start_timer", millis());
+      }
+      
+      // toggle LED
+      ledState = !ledState;   
       digitalWrite(LED_PIN, ledState);
-      Serial.println("Button pressed!");
+      Serial.println("Button pressed!");  
     }
   }
 
   // Update last button state
   lastButtonState = buttonState;
-  if ((millis() - lastTime) > potDelay) {
-    // Send Events to the client with the Sensor Readings every 5 seconds
+
+  // after 
+  if ((millis() - lastTime) > sensorReadingDelay) {
+    // Send Events to the client with the Sensor Readings every 0.25 seconds
     events.send("ping",NULL,millis());
-    events.send(getSensorReadings().c_str(),"new_readings" ,millis());  // this sends an event "new_readings"
+    events.send(getSensorReadings().c_str(),"new_readings" ,millis());  // this sends an event "new_readings" with sensor data
     Serial.println("Reading Sent");
     lastTime = millis();
   }
