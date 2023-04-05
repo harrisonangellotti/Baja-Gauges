@@ -46,12 +46,14 @@ const int POT_PIN = 32;
 
 JSONVar data;
 
-int timerValue = 300;  // start timer at 5 mins (300 seconds)
-bool timerStatus = false; // holds status of timer (on/off)
-int lastButtonState = HIGH;
+// Constants for LED and button pins
+const int LED_PIN = 21;
+const int BUTTON_PIN = 22;
 
-int ledState = LOW;
-unsigned long timerDelay = 1000; // send time every second
+// Variables to store LED state and button state
+bool ledState = false;
+bool buttonState = false;
+bool lastButtonState = false;
 
 // Timer to refresh pot reading every 500mS
 unsigned long lastTime = 0;
@@ -81,6 +83,9 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   pinMode(POT_PIN, INPUT);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
+  
+  // Set initial LED state
+  digitalWrite(LED_PIN, ledState);
 
   // initialize ESP for softAP and print IP for browser
   WiFi.softAP(ssid, password);
@@ -106,47 +111,6 @@ void setup() {
     json = String();
   });
 
-/*
-COMMENTING THIS OUT FOR GITHUB POST
-
-  // Route for POST request to start timer
-  server.on("/start-timer", HTTP_POST, [](AsyncWebServerRequest *request){
-    // If the timer is already running, do nothing
-    if (timerStatus) {
-      request->send(200, "text/plain", "Timer already started");
-      return;
-    }
-    // Set the timer status to "on"
-    timerStatus = true;
-    // Reset the timer value to 5 minutes
-    timerValue = 300;
-    // Turn on the LED
-    digitalWrite(LED_PIN, HIGH);
-    request->send(200, "text/plain", "Timer started");
-  });
-  // Route for POST request to stop timer
-  server.on("/stop-timer", HTTP_POST, [](AsyncWebServerRequest *request){
-    // If the timer is already stopped, do nothing
-    if (!timerStatus) {
-      request->send(200, "text/plain", "Timer already stopped");
-      return;
-    }
-    // Set the timer status to "off"
-    timerStatus = false;
-    // Set the timer value to 0
-    timerValue = 0;
-    // Turn off the LED
-    digitalWrite(LED_PIN, LOW);
-    request->send(200, "text/plain", "Timer stopped");
-  });
-  // Route for getting the timer value in JSON format
-  server.on("/timer-value", HTTP_GET, [](AsyncWebServerRequest *request){
-    String json = "{\"timerValue\": " + String(timerValue) + "}";
-    request->send(200, "application/json", json);
-  });
-
-  */
-
   // only runs when you connect
   events.onConnect([](AsyncEventSourceClient *client){
     if(client->lastId()){
@@ -163,44 +127,22 @@ COMMENTING THIS OUT FOR GITHUB POST
 }
 
 void loop() {
+  // Read button state
+  buttonState = digitalRead(BUTTON_PIN);
 
-/* 
-COMMENTING THIS OUT FOR GITHUB POST 
-
-  // Read the current button state
-  int currentButtonState = digitalRead(BUTTON_PIN);
-  // If the button state has changed from HIGH to LOW, start or stop the timer
-  if (currentButtonState == LOW && lastButtonState == HIGH) {
-    if (timerStatus) {
-      // Stop the timer
-      timerStatus = false;
-      timerValue = 0;
-      digitalWrite(LED_PIN, LOW);
-    } else {
-      // Start the timer
-      timerStatus = true;
-      timerValue = 300;
-      digitalWrite(LED_PIN, HIGH);
-    }
-  } 
-  // Change the last button state to the current state
-  lastButtonState = currentButtonState;
-
-  // If the timer is on, decrement the timer value every second
-  if (timerStatus) {
-    if (millis() - lastTime > timerDelay) {
-      lastTime = millis();
-      timerValue--;
-      // If the timer has reached 0, turn off the LED and set the timer status to off
-      if (timerValue <= 0) {
-        digitalWrite(LED_PIN, LOW);
-        timerStatus = false;
-      }
+  // Check if button state has changed
+  if (buttonState != lastButtonState) {
+    delay(50); // Debounce delay
+    if (buttonState == LOW) {
+      // Button is pressed, toggle LED state
+      ledState = !ledState;
+      digitalWrite(LED_PIN, ledState);
+      Serial.println("Button pressed!");
     }
   }
 
-*/
-
+  // Update last button state
+  lastButtonState = buttonState;
   if ((millis() - lastTime) > potDelay) {
     // Send Events to the client with the Sensor Readings every 5 seconds
     events.send("ping",NULL,millis());
