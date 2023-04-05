@@ -60,15 +60,25 @@ html {
     font-weight: bold;
     color: #ba78e6;
   }
-  .shifter-text { 
-    margin: 4.2rem auto;
+  .shifter-text{
+    display: flex;
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    margin: auto auto;
+    color: white;
+  }
+  .shifter-p-text,
+  .shifter-r-text,
+  .shifter-n-text,
+  .shifter-d-text { 
+    margin: 1.5rem auto;
     font-size: 2rem;
     font-weight: bold;
     writing-mode: vertical-lr;
     text-orientation: upright;
     display: flex;
     text-align: center;
-    border: solid;
+
     color: white;
   }
   .card { 
