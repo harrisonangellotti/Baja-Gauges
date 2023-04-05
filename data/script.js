@@ -91,6 +91,7 @@ var speedGauge = new RadialGauge({
 var timerId;
 var initialTime = 300; // 300 seconds in 5 minutes; this will need adjusting for empty tank time
 var time = initialTime;
+resetTimer();
 
 function startTimer() {
   timerId = setInterval(updateTimer, 1000); // update the timer value every 1000ms
