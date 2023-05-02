@@ -117,6 +117,34 @@ function updateTimer() {
   document.getElementById("timer-text").innerHTML = pad(minutes) + ":" + pad(seconds);
 }
 
+function shiftGear(gearState){
+  var colour = document.querySelector(':root');
+  var colourStyle = getComputedStyle(colour);
+
+  if (gearState == 1){
+    colourStyle.style.setProperty('--colourPark', 'white');
+    colourStyle.style.setProperty('--colourReverse', 'darkgray');
+    colourStyle.style.setProperty('--colourNeutral', 'darkgray');
+    colourStyle.style.setProperty('--colourDrive', 'darkgray');
+  } else if (gearState == 2){
+    colourStyle.style.setProperty('--colourPark', 'darkgray');
+    colourStyle.style.setProperty('--colourReverse', 'white');
+    colourStyle.style.setProperty('--colourNeutral', 'darkgray');
+    colourStyle.style.setProperty('--colourDrive', 'darkgray');
+  } else if (gearState == 3){
+    colourStyle.style.setProperty('--colourPark', 'darkgray');
+    colourStyle.style.setProperty('--colourReverse', 'darkgray');
+    colourStyle.style.setProperty('--colourNeutral', 'white');
+    colourStyle.style.setProperty('--colourDrive', 'darkgray');
+  } else if (gearState == 4){
+    colourStyle.style.setProperty('--colourPark', 'darkgray');
+    colourStyle.style.setProperty('--colourReverse', 'darkgray');
+    colourStyle.style.setProperty('--colourNeutral', 'darkgray');
+    colourStyle.style.setProperty('--colourDrive', 'white');
+  }
+  
+}
+
 function pad(num) {
   return num < 10 ? "0" + num : num;
 }
@@ -181,4 +209,14 @@ if (!!window.EventSource) {
     stopTimer();
     resetTimer();
   }, false);
+  
+  source.addEventListener('gear_shift', function(e) {
+    console.log("gear_shift", e.data);
+    var gearObj = JSON.parse(e.data);
+    console.log(gearObj);
+    speedGauge.value = myObj.gaugeSpeed;
+    shiftGear(gearObj.gearState);
+  }, false);
+
+
 }

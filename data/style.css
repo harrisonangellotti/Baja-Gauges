@@ -1,3 +1,10 @@
+:root {
+  --colourPark: #ffffff;
+  --colourDrive: #424242;
+  --colourReverse: #424242;
+  --colourNeutral: #424242;
+}
+
 html {
     font-family: Helvetica, sans-serif; 
     display: inline-block; 
@@ -67,9 +74,39 @@ html {
     margin: auto auto;
     color: white;
   }
-  .shifter-p-text,
-  .shifter-r-text,
-  .shifter-n-text,
+  .shifter-p-text { 
+    margin: 1.5rem auto;
+    font-size: 2rem;
+    font-weight: bold;
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    display: flex;
+    text-align: center;
+
+    color: var(--colourPark);
+  }
+  .shifter-r-text { 
+    margin: 1.5rem auto;
+    font-size: 2rem;
+    font-weight: bold;
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    display: flex;
+    text-align: center;
+
+    color: var(--colourReverse);
+  }
+  .shifter-n-text { 
+    margin: 1.5rem auto;
+    font-size: 2rem;
+    font-weight: bold;
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    display: flex;
+    text-align: center;
+
+    color: var(--colourNeutral);
+  }
   .shifter-d-text { 
     margin: 1.5rem auto;
     font-size: 2rem;
@@ -79,7 +116,7 @@ html {
     display: flex;
     text-align: center;
 
-    color: white;
+    color: var(--colourDrive);
   }
   .card { 
     background-color: black;

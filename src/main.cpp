@@ -46,6 +46,7 @@ const int RESET_BUTTON_PIN = 19;
 const int POT_PIN = 32; 
 
 JSONVar data;
+JSONVar gearState;
 
 // Variables to store LED state and button states
 bool ledState = false;
@@ -181,6 +182,16 @@ void loop() {
   // Update last button states
   lastStopButtonState = stopButtonState;
   lastResetButtonState = resetButtonState;
+
+  if(Serial.available() > 0) {
+    int newState = Serial.read();
+      if(newState == 1 || newState == 2 || newState == 3 || newState == 4) {
+        gearState["gearState"] = String(newState);
+        String jsonString = JSON.stringify(gearState);
+        events.send(jsonString.c_str(), "gear_shift", millis()); 
+      }
+  }
+
   
   if ((millis() - lastTime) > sensorReadingDelay) {
     // Send Events to the client with the Sensor Readings every 0.25 seconds
